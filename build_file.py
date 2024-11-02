@@ -23,7 +23,7 @@ structure = {
     ],
     "build": [],
     "scripts": [],
-    "config": ["platform_a_config.config", "platform_b_config.config"],
+    "config": ["platform_a_config.h", "platform_b_config.h"],
     "tools": [],
 }
 
@@ -32,12 +32,15 @@ def create_structure(base, structure):
     for key, items in structure.items():
         path = os.path.join(base, key)
         os.makedirs(path, exist_ok=True)
+        if not items:  # Add .gitkeep if the directory is meant to be empty
+            open(os.path.join(path, ".gitkeep"), 'a').close()
         for item in items:
             item_path = os.path.join(path, item)
             if "." in item:
                 open(item_path, 'a').close()  # Create empty file
             else:
                 os.makedirs(item_path, exist_ok=True)
+                open(os.path.join(item_path, ".gitkeep"), 'a').close()  # Add .gitkeep to empty directories
 
 # Set base directory as the current working directory
 base_directory = os.getcwd()
