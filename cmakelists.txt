@@ -1,0 +1,67 @@
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+
+# 设置C++标准
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(ROOT_DIR ${CMAKE_SOURCE_DIR})
+
+# 包含头文件目录
+target_include_directories(head PUBLIC
+    ${CMAKE_SOURCE_DIR}/inc
+    ${CMAKE_SOURCE_DIR}/src/adapter/moduleA/inc
+    ${CMAKE_SOURCE_DIR}/src/adapter/moduleB/inc
+    ${CMAKE_SOURCE_DIR}/src/adapter/moduleX/inc
+    ${CMAKE_SOURCE_DIR}/src/app/moduleA/inc
+    ${CMAKE_SOURCE_DIR}/src/hal/moduleA/inc
+    ${CMAKE_SOURCE_DIR}/src/hal/moduleB/inc
+    ${CMAKE_SOURCE_DIR}/src/hal/moduleX/inc
+    ${CMAKE_SOURCE_DIR}/src/middleware/filesystem/inc
+    ${CMAKE_SOURCE_DIR}/src/middleware/graphics/inc
+    ${CMAKE_SOURCE_DIR}/vendor/platformA
+    ${CMAKE_SOURCE_DIR}/vendor/platformB
+    ${CMAKE_SOURCE_DIR}/vendor/platformC
+    ${CMAKE_SOURCE_DIR}/vendor/third_party
+)
+
+# 添加子目录
+add_subdirectory(src)
+add_subdirectory(vendor)
+add_subdirectory(scripts)
+add_subdirectory(build)
+add_subdirectory(config)
+add_subdirectory(tools)
+
+# 如果需要，添加第三方库
+# find_package(Boost REQUIRED COMPONENTS system filesystem)
+# target_link_libraries(MyExecutable Boost::system Boost::filesystem)
+
+# 添加可执行文件
+# 假设 main.cpp 是 main/app 的源文件
+add_executable(MyExecutable src/app/main.c)
+
+# 链接库文件
+target_link_libraries(MyExecutable 
+                        ${CMAKE_SOURCE_DIR}/src/app/AppLib
+                        ${CMAKE_SOURCE_DIR}/src/adapter/AdapterLib
+                        ${CMAKE_SOURCE_DIR}/src/hal/HalLib
+                        ${CMAKE_SOURCE_DIR}/src/middleware/MiddlewareLib
+                        ${CMAKE_SOURCE_DIR}/vendor/platformA/PlatformALib
+                        ${CMAKE_SOURCE_DIR}/vendor/platformB/PlatformBLib
+                        ${CMAKE_SOURCE_DIR}/vendor/platformC/PlatformCLib
+                        ${CMAKE_SOURCE_DIR}/vendor/third_party/Third_partyLib
+)
+
+# 安装规则
+install(TARGETS MyExecutable DESTINATION bin)
+
+# 启用测试
+# enable_testing()
+# add_test(NAME MyTest COMMAND MyExecutable)
+
+# 打包
+# set(CPACK_PACKAGE_VERSION_MAJOR 1)
+# set(CPACK_PACKAGE_VERSION_MINOR 0)
+# set(CPACK_PACKAGE_CONTACT "Your Name <youremail@example.com>")
+# include(CPack)
