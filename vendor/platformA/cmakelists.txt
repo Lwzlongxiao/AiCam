@@ -1,5 +1,54 @@
-# 遍历当前目录下的所有.c文件
-file(GLOB platformA "*.c")
+# 添加一个静态库，名为hal_deriver，包含所有.c文件
+add_library(hal_deriver INTERFACE)
 
-# 添加一个静态库，名为MyStaticLib，包含所有.c文件
-add_library(PlatformALib STATIC ${platformA})
+enable_language(C ASM)
+
+
+target_compile_definitions(hal_deriver INTERFACE 
+	USE_HAL_DRIVER 
+	STM32H743xx
+    # HAL_ETH_USE_PTP
+)
+
+target_include_directories(hal_deriver INTERFACE
+    ${Project_Inc}
+)
+
+set(hal_deriver
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hsem.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mdma.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_delayblock.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c
+)
+
+target_link_directories(hal_deriver INTERFACE
+)
+
+target_link_libraries(hal_deriver INTERFACE
+)
+

@@ -1,67 +1,131 @@
-cmake_minimum_required(VERSION 3.10)
-project(MyProject)
+cmake_minimum_required(VERSION 3.29)
+
+set(CMAKE_SYSTEM_NAME Generic)
 
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(ROOT_DIR ${CMAKE_SOURCE_DIR})
+##指定项目的交叉编译器和工具，需要配置GCC工具链的环境变量
+#指定C编译器
+# set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+# #指定C++编译器
+# set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
+#指定汇编语言编译器
+set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
+#指定创建存档或创建static库的程序名称。
+set(CMAKE_AR arm-none-eabi-ar)
+#指定生成二进制文件的工具
+set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
+#指定生成汇编文件的工具
+set(CMAKE_OBJDUMP arm-none-eabi-objdump)
+#指定生成大小报告的工具
+set(SIZE arm-none-eabi-size)
 
-# 包含头文件目录
-target_include_directories(head PUBLIC
-    ${CMAKE_SOURCE_DIR}/inc
-    ${CMAKE_SOURCE_DIR}/src/adapter/moduleA/inc
-    ${CMAKE_SOURCE_DIR}/src/adapter/moduleB/inc
-    ${CMAKE_SOURCE_DIR}/src/adapter/moduleX/inc
-    ${CMAKE_SOURCE_DIR}/src/app/moduleA/inc
-    ${CMAKE_SOURCE_DIR}/src/hal/moduleA/inc
-    ${CMAKE_SOURCE_DIR}/src/hal/moduleB/inc
-    ${CMAKE_SOURCE_DIR}/src/hal/moduleX/inc
-    ${CMAKE_SOURCE_DIR}/src/middleware/filesystem/inc
-    ${CMAKE_SOURCE_DIR}/src/middleware/graphics/inc
-    ${CMAKE_SOURCE_DIR}/vendor/platformA
-    ${CMAKE_SOURCE_DIR}/vendor/platformB
-    ${CMAKE_SOURCE_DIR}/vendor/platformC
-    ${CMAKE_SOURCE_DIR}/vendor/third_party
-)
+add_compile_options(-mcpu=cortex-m7 -mfpu=fpv5-d16 -mthumb -mfloat-abi=soft)
+add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0 -Wall)
+
+##项目设置
+#定义项目的名称和使用的编程语言<C><CXX><汇编ASM>
+project(MyExecutable  C CXX ASM)
+#设置项目中 C 标准
+set(CMAKE_C_STANDARD 99)
+
+set(ROOT_DIR ${CMAKE_SOURCE_DIR})
 
 # 添加子目录
 add_subdirectory(src)
 add_subdirectory(vendor)
-add_subdirectory(scripts)
-add_subdirectory(build)
-add_subdirectory(config)
-add_subdirectory(tools)
 
 # 如果需要，添加第三方库
 # find_package(Boost REQUIRED COMPONENTS system filesystem)
 # target_link_libraries(MyExecutable Boost::system Boost::filesystem)
 
-# 添加可执行文件
-# 假设 main.cpp 是 main/app 的源文件
-add_executable(MyExecutable src/app/main.c)
+# Include toolchain file
+# include("cmake/gcc-arm-none-eabi.cmake")
+# Core project settings
+project(MyExecutable)
+# message("Build type: " ${CMAKE_BUILD_TYPE})
 
-# 链接库文件
-target_link_libraries(MyExecutable 
-                        ${CMAKE_SOURCE_DIR}/src/app/AppLib
-                        ${CMAKE_SOURCE_DIR}/src/adapter/AdapterLib
-                        ${CMAKE_SOURCE_DIR}/src/hal/HalLib
-                        ${CMAKE_SOURCE_DIR}/src/middleware/MiddlewareLib
-                        ${CMAKE_SOURCE_DIR}/vendor/platformA/PlatformALib
-                        ${CMAKE_SOURCE_DIR}/vendor/platformB/PlatformBLib
-                        ${CMAKE_SOURCE_DIR}/vendor/platformC/PlatformCLib
-                        ${CMAKE_SOURCE_DIR}/vendor/third_party/Third_partyLib
+file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c")
+
+# 链接脚本
+set(LINK_SCRIPT 
+    ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H743IITx_FLASH.ld
 )
 
-# 安装规则
-install(TARGETS MyExecutable DESTINATION bin)
+# 启动文件
+set(STARTUP_SCRIPT
+    ${CMAKE_SOURCE_DIR}/vendor/platformA/startup_stm32h743xx.s
+)
 
-# 启用测试
-# enable_testing()
-# add_test(NAME MyTest COMMAND MyExecutable)
+# Set the project name
+set(CMAKE_PROJECT_NAME MyExecutable)
 
-# 打包
-# set(CPACK_PACKAGE_VERSION_MAJOR 1)
-# set(CPACK_PACKAGE_VERSION_MINOR 0)
-# set(CPACK_PACKAGE_CONTACT "Your Name <youremail@example.com>")
-# include(CPack)
+# ELF 文件名称
+set(ELF_TARGET ${CMAKE_PROJECT_NAME})
+
+add_executable(${CMAKE_PROJECT_NAME}
+        ${app}
+)
+
+# 链接库文件
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
+                        ${hal_deriver}
+                        # ${CMAKE_SOURCE_DIR}/src/adapter/AdapterLib
+                        # ${CMAKE_SOURCE_DIR}/src/hal/HalLib
+                        # ${CMAKE_SOURCE_DIR}/src/middleware/MiddlewareLib
+                        # ${CMAKE_SOURCE_DIR}/vendor/platformA/hal_deriver
+                        # ${CMAKE_SOURCE_DIR}/vendor/platformB/PlatformBLib
+                        # ${CMAKE_SOURCE_DIR}/vendor/platformC/PlatformCLib
+                        # ${CMAKE_SOURCE_DIR}/vendor/third_party/Third_partyLib
+)
+
+#  编译参数
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC 
+	USE_HAL_DRIVER 
+	STM32H743xx
+    # HAL_ETH_USE_PTP
+    $<$<CONFIG:Debug>:DEBUG>
+)
+
+# 链接参数
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -T${LINK_SCRIPT}
+    ${CPU_FLAGS}
+    --specs=nano.specs
+    -Wl,--gc-sections
+    -Wl,-Map=${CMAKE_PROJECT_NAME}.map
+    -Wl,--cref
+    -Wl,--print-memory-usage
+)
+
+set(Project_Inc PUBLIC
+    ${CMAKE_SOURCE_DIR}/inc
+    # ${CMAKE_SOURCE_DIR}/src/adapter/moduleA/inc
+    # ${CMAKE_SOURCE_DIR}/src/adapter/moduleB/inc
+    # ${CMAKE_SOURCE_DIR}/src/adapter/moduleX/inc
+    ${CMAKE_SOURCE_DIR}/src/app/inc
+    # ${CMAKE_SOURCE_DIR}/src/hal/moduleA/inc
+    # ${CMAKE_SOURCE_DIR}/src/hal/moduleB/inc
+    # ${CMAKE_SOURCE_DIR}/src/hal/moduleX/inc
+    # ${CMAKE_SOURCE_DIR}/src/middleware/filesystem/inc
+    # ${CMAKE_SOURCE_DIR}/src/middleware/graphics/inc
+    ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Device/ST/STM32H7xx/Include
+    ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Include
+    ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H7xx_HAL_Driver/Inc
+    # ${CMAKE_SOURCE_DIR}/vendor/platformB
+    # ${CMAKE_SOURCE_DIR}/vendor/platformC
+    # ${CMAKE_SOURCE_DIR}/vendor/third_party
+)
+
+# 包含头文件目录
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
+    ${Project_Inc}
+)
+
+# 添加自定义命令，用于生成 hex bin 格式文件，POST_BUILD 表示生成 TARGET 后执行命令
+add_custom_command(TARGET ${ELF_TARGET} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O ihex ${ELF_TARGET} ${ELF_TARGET}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O binary -S ${ELF_TARGET} ${ELF_TARGET}.bin
+)

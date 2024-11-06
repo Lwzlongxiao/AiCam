@@ -1,5 +1,5 @@
 # 添加子目录
-add_subdirectory(adapter)
+# add_subdirectory(adapter)
 add_subdirectory(app)
-add_subdirectory(hal)
-add_subdirectory(middleware)
+# add_subdirectory(hal)
+# add_subdirectory(middleware)
