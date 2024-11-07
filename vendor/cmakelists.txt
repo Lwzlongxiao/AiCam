@@ -1,5 +1,5 @@
 # 添加子目录
 add_subdirectory(platformA)
-add_subdirectory(platformB)
-add_subdirectory(platformC)
-add_subdirectory(third_party)
+# add_subdirectory(platformB)
+# add_subdirectory(platformC)
+# add_subdirectory(third_party)
