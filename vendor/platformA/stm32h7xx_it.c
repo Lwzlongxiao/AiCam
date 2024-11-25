@@ -177,6 +177,16 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 
+void spi_irq(void)
+{
+  
+}
+
+void TIM4_IRQHandler(void)
+{
+  g_irqHandle[10=tim4].hanFunc()
+}
+
 /**
   * @brief This function handles System tick timer.
   */
@@ -186,6 +196,7 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
+  g_irqHandle[10=spi].hanFunc()
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
