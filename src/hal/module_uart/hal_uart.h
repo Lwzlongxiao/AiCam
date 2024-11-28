@@ -37,10 +37,10 @@ typedef status (*UART_ReceiveDMAFn)(UART_Properties *, uint8_t *, uint16_t);
 
 /* 行为定义 */
 typedef struct{
-    int8_t (*HAL_UART_Init)(UART_Properties);
-    int8_t (*HAL_UART_DeInit)(UART_Properties);
-    void (*HAL_UART_MspInit)(UART_Properties);
-    void (*HAL_UART_MspDeInit)(UART_Properties);
+    int8_t (*HAL_UART_InitFn)(UART_Properties);
+    int8_t (*HAL_UART_DeInitFn)(UART_Properties);
+    void (*HAL_UART_MspInitFn)(UART_Properties);
+    void (*HAL_UART_MspDeInitFn)(UART_Properties);
 
     UART_TransmitFn UART_Transmit;
     UART_ReceiveFn UART_Receive;

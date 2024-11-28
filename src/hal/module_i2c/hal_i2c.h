@@ -66,10 +66,10 @@ typedef status (*I2C_SlaveSeqReceiveDMAFn)(I2C_Properties *, uint8_t *, uint16_t
 
 /* 行为定义 */
 typedef struct{
-    int8_t (*HAL_I2C_Init)(I2C_Properties);
-    int8_t (*HAL_I2C_DeInit)(I2C_Properties);
-    void (*HAL_I2C_MspInit)(I2C_Properties);
-    void (*HAL_I2C_MspDeInit)(I2C_Properties);
+    int8_t (*HAL_I2C_InitFn)(I2C_Properties);
+    int8_t (*HAL_I2C_DeInitFn)(I2C_Properties);
+    void (*HAL_I2C_MspInitFn)(I2C_Properties);
+    void (*HAL_I2C_MspDeInitFn)(I2C_Properties);
 
     I2C_MasterTransmitFn I2C_MasterTransmit;
     I2C_MasterReceiveFn I2C_MasterReceive;

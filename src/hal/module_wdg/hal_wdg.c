@@ -1,46 +1,48 @@
-#include "stm32h7xx_hal.h"
 #include "hal_wdg.h"
+#include "stm32h7xx_hal_iwdg.h"
 
-/* 看门狗定时器ID定义 */
-enum {
-    WDG_ID0 = 0,
-    WDG_ID1 = 1,
-    WDG_ID_MAX = 2
+// 文件名+函数+行号printf做dbug
+static Hal_WdgStru g_wdgList[WDG_ID_MAX] = 
+{
+    {
+
+    },
+    {
+
+    },
+    {
+
+    },
+    {
+
+    },
+    {
+        .wdgProperties.Prescaler = IWDG_PRESCALER_64,
+        .wdgProperties.Reload = 4095,
+    },
+    {
+
+    },
+    {
+
+    },
 };
+static WDG_Behavior g_wdgHost;
 
-/* 看门狗属性定义 */
-typedef struct {
-    uint32_t Timeout;         /* 超时时间 */
-    uint32_t Reload;          /* 重载值 */
-    uint32_t Window;          /* 窗口值 */
-} WDG_Properties;
+void HAL_WDG_InitHookFromVendor(void)
+{
+    g_wdgHost.HAL_WDG_Init = HAL_IWDG_Init;
+    g_wdgHost.HAL_WDG_DeInit = HAL_IWDG_Refresh;
 
-typedef int8_t status;
+    for (uint32_t i = 0; i < WDG_ID_MAX; i++) {
+        g_wdgList[i].wdgBehavior = &g_wdgHost;
+    }
+}
 
-/* 看门狗操作函数原型 */
-typedef status (*WDG_StartFn)(WDG_Properties *);
-typedef status (*WDG_FeedFn)(WDG_Properties *);
-typedef status (*WDG_StopFn)(WDG_Properties *);
-
-/* 行为定义 */
-typedef struct {
-    int8_t (*HAL_WDG_Init)(WDG_Properties *wdgProperties);
-    int8_t (*HAL_WDG_DeInit)(WDG_Properties *wdgProperties);
-
-    WDG_StartFn WDG_Start;
-    WDG_FeedFn WDG_Feed;
-    WDG_StopFn WDG_Stop;
-} WDG_Behavior;
-
-/* 对象定义 */
-typedef struct {
-    WDG_Properties wdgProperties;
-    WDG_Behavior *wdgBehavior;
-} Hal_WdgStru;
-
-/* 函数声明 */
-Hal_WdgStru* HAL_WDG_GetHandle(uint8_t wdgIndex) {
-    static Hal_WdgStru wdgHandles[WDG_ID_MAX];
-    // 根据wdgIndex返回对应的看门狗句柄
-    return &wdgHandles[wdgIndex];
+Hal_WdgStru* HAL_WDG_GetHandle(uint8_t wdgIndex)
+{
+    if (wdgIndex >= WDG_ID_MAX) {
+        return NULL;
+    }
+    return &g_wdgList[wdgIndex];
 }

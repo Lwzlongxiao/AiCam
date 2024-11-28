@@ -7,6 +7,10 @@
         "stm32h7xx_hal_conf.h": "c",
         "cstdint": "c",
         "stm32h7xx_hal_i2c.h": "c",
-        "hal_i2c.h": "c"
+        "hal_i2c.h": "c",
+        "stm32h7xx_hal_iwdg.h": "c",
+        "hal_wdg.h": "c",
+        "stm32h7xx_hal_adc.h": "c",
+        "hal_adc.h": "c"
     }
 }
