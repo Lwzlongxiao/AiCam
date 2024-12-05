@@ -11,6 +11,8 @@
         "stm32h7xx_hal_iwdg.h": "c",
         "hal_wdg.h": "c",
         "stm32h7xx_hal_adc.h": "c",
-        "hal_adc.h": "c"
+        "hal_adc.h": "c",
+        "usart.h": "c",
+        "embedded_cli.h": "c"
     }
 }
