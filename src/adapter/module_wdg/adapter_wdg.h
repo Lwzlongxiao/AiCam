@@ -13,8 +13,5 @@
 #define WDG_REG_RESET 0x02
 
 // 函数声明
-void Adapter_Wdg_Init(void); // 初始化看门狗定时器
-void Adapter_Wdg_SetTimeout(uint8_t timeout); // 设置看门狗定时器的超时时间
-void Adapter_Wdg_Kick(void); // “踢”看门狗，防止重启
 
 #endif /* _MODULE_WDG_H */

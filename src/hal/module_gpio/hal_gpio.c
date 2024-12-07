@@ -1,5 +1,4 @@
 #include "hal_gpio.h"
-#include "stm32h7xx_hal_gpio.h"
 
 // 文件名+函数+行号printf做debug
 static Hal_GpioStru g_gpioList[GPIO_ID_MAX] = 
@@ -24,8 +23,8 @@ void HAL_GPIO_InitHookFromVendor(void)
 {
     g_gpioHost.HAL_GPIO_Init = HAL_GPIO_Init;
     g_gpioHost.HAL_GPIO_DeInit = HAL_GPIO_DeInit;
-    g_gpioHost.HAL_GPIO_MspInit = HAL_GPIO_MspInit;
-    g_gpioHost.HAL_GPIO_MspDeInit = HAL_GPIO_MspDeInit;
+    // g_gpioHost.HAL_GPIO_MspInit = HAL_GPIO_MspInit;
+    // g_gpioHost.HAL_GPIO_MspDeInit = HAL_GPIO_MspDeInit;
     g_gpioHost.GPIO_WritePin = HAL_GPIO_WritePin;
     g_gpioHost.GPIO_ReadPin = HAL_GPIO_ReadPin;
 

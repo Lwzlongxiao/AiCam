@@ -1,5 +1,5 @@
 #include "hal_adc.h"
-#include "stm32h7xx_hal_adc.h"
+#include "stm32h7xx_hal.h"
 
 /* File and function for debugging */
 static Hal_AdcStru g_adcList[ADC_ID_MAX] = {
@@ -8,15 +8,15 @@ static Hal_AdcStru g_adcList[ADC_ID_MAX] = {
     { },
     { },
     {
-        .adcProperties.Resolution = ADC_RESOLUTION_12B,
+        // .adcProperties.Resolution = ADC_RESOLUTION_12B,
         .adcProperties.ScanConvMode = ADC_SCAN_DISABLE,
-        .adcProperties.ContinuousConvMode = ADC_CONTINUOUS_CONV_ENABLE,
-        .adcProperties.DiscontinuousConvMode = ADC_DISC_MODE_DISABLE,
+        // .adcProperties.ContinuousConvMode = ADC_CONTINUOUS_CONV_ENABLE,
+        // .adcProperties.DiscontinuousConvMode = ADC_DISC_MODE_DISABLE,
         .adcProperties.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE,
-        .adcProperties.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1,
-        .adcProperties.DataAlign = ADC_DATAALIGN_RIGHT,
+        // .adcProperties.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1,
+        // .adcProperties.DataAlign = ADC_DATAALIGN_RIGHT,
         .adcProperties.NbrOfConversion = 1,
-        .adcProperties.SamplingTime = ADC_SAMPLETIME_3CYCLES,
+        // .adcProperties.SamplingTime = ADC_SAMPLETIME_3CYCLES,
     },
     { },
     { },
@@ -25,10 +25,10 @@ static Hal_AdcStru g_adcList[ADC_ID_MAX] = {
 static ADC_Behavior g_adcHost;
 
 void HAL_ADC_InitHookFromVendor(void) {
-    g_adcHost.HAL_ADC_Init = HAL_ADC_Init;
-    g_adcHost.HAL_ADC_DeInit = HAL_ADC_DeInit;
-    g_adcHost.HAL_ADC_MspInit = HAL_ADC_MspInit;
-    g_adcHost.HAL_ADC_MspDeInit = HAL_ADC_MspDeInit;
+    g_adcHost.HAL_ADC_InitFn = HAL_ADC_Init;
+    g_adcHost.HAL_ADC_DeInitFn = HAL_ADC_DeInit;
+    g_adcHost.HAL_ADC_MspInitFn = HAL_ADC_MspInit;
+    g_adcHost.HAL_ADC_MspDeInitFn = HAL_ADC_MspDeInit;
 
     g_adcHost.ADC_Start = HAL_ADC_Start;
     g_adcHost.ADC_Stop = HAL_ADC_Stop;

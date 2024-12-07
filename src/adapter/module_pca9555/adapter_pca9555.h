@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "hal_i2c.h"
+#include <stddef.h>
 
 #define PCA9555_I2C_ID 4
 #define PCA9555_I2C_ADDR 0x20

@@ -1,5 +1,4 @@
 #include "hal_timer.h"
-#include "stm32h7xx_hal_tim.h"
 
 // 文件名+函数+行号printf做debug
 static Hal_TimerStru g_timerList[TIMER_ID_MAX] = 
@@ -38,10 +37,10 @@ static TIM_Hehavior g_timerHost;
 
 void HAL_TimerInitHookFromVendor(void)
 {
-    g_timerHost.HAL_TIM_Init = HAL_TIM_Init;
-    g_timerHost.HAL_TIM_DeInit = HAL_TIM_DeInit;
-    g_timerHost.HAL_TIM_MspInit = HAL_TIM_MspInit;
-    g_timerHost.HAL_TIM_MspDeInit = HAL_TIM_MspDeInit;
+    g_timerHost.HAL_TIM_InitFn = HAL_TIM_Base_Init;
+    g_timerHost.HAL_TIM_DeInitFn = HAL_TIM_Base_DeInit;
+    // g_timerHost.HAL_TIM_MspInitFn = HAL_TIM_MspInit;
+    // g_timerHost.HAL_TIM_MspDeIniFn = HAL_TIM_MspDeInit;
 
     g_timerHost.TIM_BaseStart = HAL_TIM_Base_Start;
     g_timerHost.TIM_BaseStop = HAL_TIM_Base_Stop;

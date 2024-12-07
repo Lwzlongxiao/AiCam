@@ -1,5 +1,5 @@
 #include "hal_i2c.h"
-#include "stm32h7xx_hal_i2c.h"
+#include "stm32h7xx_hal.h"
 
 // 文件名+函数+行号printf做dbug
 static Hal_I2cStru g_i2cList[I2C_ID_MAX] = 
@@ -37,10 +37,10 @@ static I2C_Hehavior g_i2cHost;
 
 void HAL_IICInitHookFromVendor(void)
 {
-    g_i2cHost.HAL_I2C_Init = HAL_I2C_Init;
-    g_i2cHost.HAL_I2C_DeInit = HAL_I2C_DeInit;
-    g_i2cHost.HAL_I2C_MspDeInit = HAL_I2C_MspInit;
-    g_i2cHost.HAL_I2C_MspInit = HAL_I2C_MspInit;
+    g_i2cHost.HAL_I2C_InitFn = HAL_I2C_Init;
+    g_i2cHost.HAL_I2C_DeInitFn = HAL_I2C_DeInit;
+    g_i2cHost.HAL_I2C_MspDeInitFn = HAL_I2C_MspInit;
+    g_i2cHost.HAL_I2C_MspInitFn = HAL_I2C_MspInit;
     g_i2cHost.I2C_MasterTransmit = HAL_I2C_Master_Transmit;
     g_i2cHost.I2C_MasterReceive = HAL_I2C_Master_Receive;
     g_i2cHost.I2C_SlaveTransmit = HAL_I2C_Slave_Transmit;

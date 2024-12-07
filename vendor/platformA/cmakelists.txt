@@ -1,23 +1,4 @@
-# 添加一个静态库，名为hal_deriver，包含所有.c文件
-add_library(hal_deriver INTERFACE)
-
-enable_language(C ASM)
-
-
-target_compile_definitions(hal_deriver INTERFACE 
-	USE_HAL_DRIVER 
-	STM32H743xx
-    # HAL_ETH_USE_PTP
-)
-
-# target_include_directories(hal_deriver INTERFACE
-#     ${Project_Inc}
-# )
-
-target_include_directories(hal_deriver INTERFACE 
-${VENDOR_HEADERS})
-
-set(hal_deriver
+set(hal_derivers
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
@@ -47,11 +28,29 @@ set(hal_deriver
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c
    ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc.c
+   ./STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc_ex.c   
 )
 
-target_link_directories(hal_deriver INTERFACE
+# file(GLOB_RECURSE hal_deriversrc "./STM32H7xx_HAL_Driver/Src/*.c")
+# message(STATUS, ${hal_deriver})
+# 添加一个静态库，名为hal_deriver，包含所有.c文件
+add_library(hal_deriverLib ${hal_derivers})
+
+target_compile_definitions(hal_deriverLib PUBLIC 
+	USE_HAL_DRIVER 
+    -DSTM32H743xx
+    # QUADSPI
+    # HAL_ETH_USE_PTP
+)
+message("adapter1: ${HEADERS_LIST}")
+target_include_directories(hal_deriverLib PUBLIC 
+    ${HEADERS_LIST}
 )
 
-target_link_libraries(hal_deriver INTERFACE
-)
+# target_link_directories(hal_deriver PUBLIC
+# )
+
+# target_link_libraries(hal_deriver PUBLIC
+# )
 

@@ -10,16 +10,19 @@ function(collect_header_dir MODULE_NAME MODULE_DIR)
         set(RELATIVE_HEADER_FILES)
         foreach(file ${HEADER_FILES})
             # 获取头文件所在的目录
+            # message(STATUS "Found header file in ${MODULE_NAME}: ${file}")
             get_filename_component(header_dir ${file} DIRECTORY)
             # 将绝对路径转换为相对路径
-            file(RELATIVE_PATH RELATIVE_PATH_FILE ${CMAKE_SOURCE_DIR} ${header_dir})
-            list(APPEND RELATIVE_HEADER_FILES ${RELATIVE_PATH_FILE})
+            # file(RELATIVE_PATH RELATIVE_PATH_FILE ${CMAKE_SOURCE_DIR} ${header_dir})
+            # list(APPEND RELATIVE_HEADER_FILES ${RELATIVE_PATH_FILE})
+            # file(RELATIVE_PATH RELATIVE_PATH_FILE ${CMAKE_SOURCE_DIR} ${header_dir})
+            list(APPEND RELATIVE_HEADER_FILES ${header_dir})
             # 移除重复的目录
             list(REMOVE_DUPLICATES RELATIVE_HEADER_FILES)
         endforeach()
 
         # 设置模块的头文件变量并返回给调用者
-        set(${MODULE_NAME}_HEADERS PUBLIC ${RELATIVE_HEADER_FILES} PARENT_SCOPE)
+        set(${MODULE_NAME}_HEADERS ${RELATIVE_HEADER_FILES} PARENT_SCOPE)
 
         # 打印找到的头文件列表（仅调试用）
         # foreach(file ${RELATIVE_HEADER_FILES})
@@ -33,7 +36,9 @@ endfunction()
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+# 设置CMAKE_C_COMPILER_WORKS和CMAKE_CXX_COMPILER_WORKS为1，以禁用编译器检查：
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
 ##指定项目的交叉编译器和工具，需要配置GCC工具链的环境变量,cmakeTools需要配置 GCC工具链
 set(CMAKE_SYSTEM_NAME Generic)
 # # 指定C编译器
@@ -63,14 +68,6 @@ set(CMAKE_C_STANDARD 99)
 
 set(ROOT_DIR ${CMAKE_SOURCE_DIR})
 
-# 添加子目录
-add_subdirectory(src)
-add_subdirectory(vendor)
-# add_subdirectory(adapter)
-# add_subdirectory(middleware)
-
-
-
 # 如果需要，添加第三方库
 # find_package(Boost REQUIRED COMPONENTS system filesystem)
 # target_link_libraries(MyExecutable Boost::system Boost::filesystem)
@@ -80,6 +77,35 @@ add_subdirectory(vendor)
 # Core project settings
 project(MyExecutable)
 # message("Build type: " ${CMAKE_BUILD_TYPE})
+
+# 定义各个模块的目录
+set(ADAPTER_DIR ${CMAKE_SOURCE_DIR}/src/adapter)
+set(APP_DIR ${CMAKE_SOURCE_DIR}/src/app)
+set(HAL_DIR ${CMAKE_SOURCE_DIR}/src/hal)
+set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/src/middleware)
+set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor/PlatformA)
+
+# 调用函数为每个模块收集头文件
+collect_header_dir(ADAPTER ${ADAPTER_DIR})
+collect_header_dir(APP ${APP_DIR})
+collect_header_dir(HAL ${HAL_DIR})
+collect_header_dir(MIDDLEWARE ${MIDDLEWARE_DIR})
+collect_header_dir(VENDOR ${VENDOR_DIR})
+
+# set(VENDOR_HEADERS
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Core/Inc
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H7xx_HAL_Driver/Inc
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H7xx_HAL_Driver/Inc/Legacy
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Device/ST/STM32H7xx/Include
+#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Include
+# )
+# 合并LIST1和LIST2到一个新的列表变量MERGED_LIST
+list(APPEND HEADERS_LIST ${ADAPTER_HEADERS} ${APP_HEADERS} ${HAL_HEADERS} ${MIDDLEWARE_HEADERS} ${VENDOR_HEADERS})
+
+# 添加子目录
+add_subdirectory(src)
+add_subdirectory(vendor)
 
 file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c")
 
@@ -105,15 +131,17 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 # 链接库文件
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-                        ${HalLib}
-                        ${AdapterLib}
-                        ${hal_deriver}
+                    ${hal_deriverLib}
+                    ${HalLib}
+                    ${AdapterLib}
+
 )
 
 #  编译参数
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC 
-	USE_HAL_DRIVER 
-	STM32H743xx
+    USE_HAL_DRIVER 
+	-DSTM32H743xx
+    # QUADSPI
     # HAL_ETH_USE_PTP
     $<$<CONFIG:Debug>:DEBUG>
 )
@@ -129,27 +157,10 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
     -Wl,--print-memory-usage
 )
 
-# 定义各个模块的目录
-set(ADAPTER_DIR ${CMAKE_SOURCE_DIR}/src/adapter)
-set(APP_DIR ${CMAKE_SOURCE_DIR}/src/app)
-set(HAL_DIR ${CMAKE_SOURCE_DIR}/src/hal)
-set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/src/middleware)
-set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor/PlatformA)
-
-# 调用函数为每个模块收集头文件
-collect_header_dir(ADAPTER ${ADAPTER_DIR})
-collect_header_dir(APP ${APP_DIR})
-collect_header_dir(HAL ${HAL_DIR})
-collect_header_dir(MIDDLEWARE ${MIDDLEWARE_DIR})
-collect_header_dir(VENDOR ${VENDOR_DIR})
 
 # 包含头文件目录
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
-    ${ADAPTER_HEADERS}
-    ${APP_HEADERS}
-    # ${HAL_HEADERS}
-    # ${MIDDLEWARE_HEADERS}
-    ${VENDOR_HEADERS}
+    ${HEADERS_LIST}
 )
 
 # 添加自定义命令，用于生成 hex bin 格式文件，POST_BUILD 表示生成 TARGET 后执行命令

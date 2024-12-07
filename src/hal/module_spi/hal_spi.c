@@ -1,5 +1,5 @@
 #include "hal_spi.h"
-#include "stm32h7xx_hal_spi.h"
+#include "stm32h7xx_hal.h"
 
 /* 文件和函数用于调试 */
 static Hal_SpiStru g_spiList[SPI_ID_MAX] = {
@@ -24,10 +24,10 @@ static SPI_Behavior g_spiHost;
 
 void HAL_SPI_InitHookFromVendor(void) {
     /* SPI初始化函数 */
-    g_spiHost.HAL_SPI_Init = HAL_SPI_Init;
-    g_spiHost.HAL_SPI_DeInit = HAL_SPI_DeInit;
-    g_spiHost.HAL_SPI_MspInit = HAL_SPI_MspInit;
-    g_spiHost.HAL_SPI_MspDeInit = HAL_SPI_MspDeInit;
+    g_spiHost.HAL_SPI_InitFn = HAL_SPI_Init;
+    g_spiHost.HAL_SPI_DeInitFn = HAL_SPI_DeInit;
+    g_spiHost.HAL_SPI_MspInitFn = HAL_SPI_MspInit;
+    g_spiHost.HAL_SPI_MspDeInitFn = HAL_SPI_MspDeInit;
 
     g_spiHost.SPI_Transmit = HAL_SPI_Transmit;
     g_spiHost.SPI_Receive = HAL_SPI_Receive;

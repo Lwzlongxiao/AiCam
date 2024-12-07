@@ -1,5 +1,5 @@
 # 遍历当前目录下的所有.c文件
-file(GLOB middleware "*.c")
+file(GLOB_RECURSE middleware "*.c")
 
 # 添加一个静态库，名为MyStaticLib，包含所有.c文件
 add_library(MiddlewareLib STATIC ${middleware})

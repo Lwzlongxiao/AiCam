@@ -1,5 +1,5 @@
 #include "hal_dcmi.h"
-#include "stm32h7xx_hal_dcmi.h"
+#include "stm32h7xx_hal.h"
 
 // DCMI list, you can extend this if there are more DCMI peripherals
 static Hal_DCMI_Stru g_dcmiList[DCMI_ID_MAX] = {
@@ -17,8 +17,8 @@ void HAL_DCMI_InitHookFromVendor(void)
 {
     g_dcmiHost.DCMI_Init = HAL_DCMI_Init;
     g_dcmiHost.DCMI_DeInit = HAL_DCMI_DeInit;
-    g_dcmiHost.DCMI_StartCapture = HAL_DCMI_StartCapture;
-    g_dcmiHost.DCMI_StopCapture = HAL_DCMI_StopCapture;
+    // g_dcmiHost.DCMI_StartCapture = HAL_DCMI_StartCapture;
+    // g_dcmiHost.DCMI_StopCapture = HAL_DCMI_StopCapture;
 
     for (uint32_t i = 0; i < DCMI_ID_MAX; i++) {
         g_dcmiList[i].dcmiBehavior = &g_dcmiHost;

@@ -2,6 +2,7 @@
 #define __HAL_IIC_H
 
 #include <stdint.h>
+#include "stm32h7xx_hal.h"
 
 /* I2C ID定义 */
 enum {

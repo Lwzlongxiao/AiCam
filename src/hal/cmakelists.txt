@@ -1,8 +1,14 @@
 # 遍历当前目录下的所有.c文件
-file(GLOB hal "*.c")
+file(GLOB_RECURSE hal "*.c")
 
 # 添加一个静态库，名为MyStaticLib，包含所有.c文件
 add_library(HalLib STATIC ${hal})
-target_include_directories(HalLib PUBLIC ${HAL_HEADERS} 
-${VENDOR_HEADERS}
+
+target_compile_definitions(HalLib PUBLIC 
+	USE_HAL_DRIVER 
+    -DSTM32H743xx
+    # HAL_ETH_USE_PTP
+)
+target_include_directories(HalLib PUBLIC 
+    ${HEADERS_LIST}
 )

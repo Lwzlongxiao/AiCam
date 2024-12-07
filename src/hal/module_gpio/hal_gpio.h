@@ -2,7 +2,7 @@
 #define __HAL_GPIO_H
 
 #include <stdint.h>
-#include "stm32h7xx_hal_gpio.h"
+#include "stm32h7xx_hal.h"
 
 /* GPIO ID定义 */
 enum {

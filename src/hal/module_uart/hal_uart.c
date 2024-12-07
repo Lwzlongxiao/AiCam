@@ -1,15 +1,8 @@
 // File: hal_uart.c
 
 #include "hal_uart.h"
-#include "stm32h7xx_hal_uart.h"
+#include "stm32h7xx_hal.h"
 
-
-
-// UART object structure
-typedef struct {
-    UART_Properties uartProperties;
-    UART_Behavior *uartBehavior;
-} Hal_UartStru;
 
 // Static UART list and behavior instances
 static Hal_UartStru g_uartList[UART_ID_MAX] = 
@@ -31,10 +24,10 @@ static UART_Behavior g_uartHost;
 // Function to initialize UART behavior from vendor
 void HAL_UART_InitHookFromVendor(void)
 {
-    g_uartHost.HAL_UART_Init = HAL_UART_Init;
-    g_uartHost.HAL_UART_DeInit = HAL_UART_DeInit;
-    g_uartHost.HAL_UART_MspInit = HAL_UART_MspInit;
-    g_uartHost.HAL_UART_MspDeInit = HAL_UART_MspDeInit;
+    g_uartHost.HAL_UART_InitFn = HAL_UART_Init;
+    g_uartHost.HAL_UART_DeInitFn = HAL_UART_DeInit;
+    g_uartHost.HAL_UART_MspInitFn = HAL_UART_MspInit;
+    g_uartHost.HAL_UART_MspDeInitFn = HAL_UART_MspDeInit;
     g_uartHost.UART_Transmit = HAL_UART_Transmit;
     g_uartHost.UART_Receive = HAL_UART_Receive;
     g_uartHost.UART_Transmit_IT = HAL_UART_Transmit_IT;

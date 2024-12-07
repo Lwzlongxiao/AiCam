@@ -2,7 +2,7 @@
 #define __HAL_TIMER_H
 
 #include <stdint.h>
-#include "stm32h7xx_hal_tim.h"
+#include "stm32h7xx_hal.h"
 
 /* 定时器ID定义 */
 enum {

@@ -13,6 +13,24 @@
         "stm32h7xx_hal_adc.h": "c",
         "hal_adc.h": "c",
         "usart.h": "c",
-        "embedded_cli.h": "c"
+        "embedded_cli.h": "c",
+        "stm32h7xx_hal_dcmi.h": "c",
+        "hal_dcmi.h": "c",
+        "stm32h7xx_hal_qspi.h": "c",
+        "stm32h7xx_hal_sdram.h": "c",
+        "i2c.h": "c",
+        "dma.h": "c",
+        "sdmmc.h": "c",
+        "gpio.h": "c",
+        "fmc.h": "c",
+        "hal_fmc.h": "c",
+        "stm32h7xx_ll_fmc.h": "c",
+        "adapter_wdg.h": "c",
+        "adapter_pca9555.h": "c",
+        "stm32h7xx_hal_def.h": "c",
+        "stm32h7xx.h": "c",
+        "stm32h743xx.h": "c",
+        "hal_gpio.h": "c",
+        "stm32h7xx_hal_gpio.h": "c"
     }
 }

@@ -1,5 +1,5 @@
 #include "hal_wdg.h"
-#include "stm32h7xx_hal_iwdg.h"
+#include "stm32h7xx_hal.h"
 
 // 文件名+函数+行号printf做dbug
 static Hal_WdgStru g_wdgList[WDG_ID_MAX] = 
@@ -31,8 +31,8 @@ static WDG_Behavior g_wdgHost;
 
 void HAL_WDG_InitHookFromVendor(void)
 {
-    g_wdgHost.HAL_WDG_Init = HAL_IWDG_Init;
-    g_wdgHost.HAL_WDG_DeInit = HAL_IWDG_Refresh;
+    g_wdgHost.HAL_WDG_InitFn = HAL_IWDG_Init;
+    g_wdgHost.HAL_WDG_DeInitFn = HAL_IWDG_Refresh;
 
     for (uint32_t i = 0; i < WDG_ID_MAX; i++) {
         g_wdgList[i].wdgBehavior = &g_wdgHost;

@@ -1,5 +1,5 @@
 #include "hal_qspi.h"
-#include "stm32h7xx_hal_qspi.h"
+#include "stm32h7xx_hal.h"
 
 // 文件名+函数+行号printf做dbug
 static Hal_QspiStru g_qspiList[QSPI_ID_MAX] = 
@@ -17,15 +17,15 @@ static QSPI_Hehavior g_qspiHost;
 void HAL_QSPI_InitHookFromVendor(void)
 {
     // 初始化行为函数指针
-    g_qspiHost.HAL_QSPI_Init = HAL_QSPI_Init;
-    g_qspiHost.HAL_QSPI_DeInit = HAL_QSPI_DeInit;
-    g_qspiHost.HAL_QSPI_MspInit = HAL_QSPI_MspInit;
-    g_qspiHost.HAL_QSPI_MspDeInit = HAL_QSPI_MspDeInit;
+    g_qspiHost.HAL_QSPI_InitFn = HAL_QSPI_Init;
+    g_qspiHost.HAL_QSPI_DeInitFn = HAL_QSPI_DeInit;
+    g_qspiHost.HAL_QSPI_MspInitFn = HAL_QSPI_MspInit;
+    g_qspiHost.HAL_QSPI_MspDeInitFn = HAL_QSPI_MspDeInit;
 
     g_qspiHost.QSPI_Transmit = HAL_QSPI_Transmit;
     g_qspiHost.QSPI_Receive = HAL_QSPI_Receive;
-    g_qspiHost.QSPI_Write_IT = HAL_QSPI_Write_IT;
-    g_qspiHost.QSPI_Read_IT = HAL_QSPI_Read_IT;
+    // g_qspiHost.QSPI_Write_IT = HAL_QSPI_Write_IT;
+    // g_qspiHost.QSPI_Read_IT = HAL_QSPI_Read_IT;
 
     g_qspiHost.QSPI_Transmit_DMA = HAL_QSPI_Transmit_DMA;
     g_qspiHost.QSPI_Receive_DMA = HAL_QSPI_Receive_DMA;
