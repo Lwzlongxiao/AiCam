@@ -14,7 +14,16 @@
 # target_link_libraries(${PROJECT_NAME} hal)
 
 # 遍历当前目录下的所有.c文件
-# file(GLOB_RECURSE app "*.c")
+file(GLOB_RECURSE app "*.c" "*.s")
 
-# # 添加一个静态库，名为MyStaticLib，包含所有.c文件
-# add_library(AppLib STATIC ${app})
+# 添加一个静态库，名为MyStaticLib，包含所有.c文件
+add_library(AppLib OBJECT ${app})
+
+target_compile_definitions(AppLib PUBLIC 
+	USE_HAL_DRIVER 
+    -DSTM32H743xx
+    # HAL_ETH_USE_PTP
+)
+target_include_directories(AppLib PUBLIC 
+    ${HEADERS_LIST}
+)

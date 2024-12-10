@@ -1,153 +1,104 @@
 cmake_minimum_required(VERSION 3.29)
 
-function(collect_header_dir MODULE_NAME MODULE_DIR)
-    # 检查模块目录是否存在
-    if(EXISTS ${MODULE_DIR})
-        # 遍历目录下的所有 .h 文件
-        file(GLOB_RECURSE HEADER_FILES "${MODULE_DIR}/*.h")
-
-        # 创建一个变量保存相对路径的头文件
-        set(RELATIVE_HEADER_FILES)
-        foreach(file ${HEADER_FILES})
-            # 获取头文件所在的目录
-            # message(STATUS "Found header file in ${MODULE_NAME}: ${file}")
-            get_filename_component(header_dir ${file} DIRECTORY)
-            # 将绝对路径转换为相对路径
-            # file(RELATIVE_PATH RELATIVE_PATH_FILE ${CMAKE_SOURCE_DIR} ${header_dir})
-            # list(APPEND RELATIVE_HEADER_FILES ${RELATIVE_PATH_FILE})
-            # file(RELATIVE_PATH RELATIVE_PATH_FILE ${CMAKE_SOURCE_DIR} ${header_dir})
-            list(APPEND RELATIVE_HEADER_FILES ${header_dir})
-            # 移除重复的目录
-            list(REMOVE_DUPLICATES RELATIVE_HEADER_FILES)
-        endforeach()
-
-        # 设置模块的头文件变量并返回给调用者
-        set(${MODULE_NAME}_HEADERS ${RELATIVE_HEADER_FILES} PARENT_SCOPE)
-
-        # 打印找到的头文件列表（仅调试用）
-        # foreach(file ${RELATIVE_HEADER_FILES})
-        #     message(STATUS "Found header file in ${MODULE_NAME}: ${file}")
-        # endforeach()
-    else()
-        message(WARNING "Directory ${MODULE_DIR} does not exist for module ${MODULE_NAME}")
-    endif()
-endfunction()
-
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-# 设置CMAKE_C_COMPILER_WORKS和CMAKE_CXX_COMPILER_WORKS为1，以禁用编译器检查：
+
+# 禁用编译器检查
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
-##指定项目的交叉编译器和工具，需要配置GCC工具链的环境变量,cmakeTools需要配置 GCC工具链
-set(CMAKE_SYSTEM_NAME Generic)
-# # 指定C编译器
-set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-# #指定C++编译器
-set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 
-#指定汇编语言编译器
+# 指定交叉编译工具链
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
-#指定创建存档或创建static库的程序名称。
 set(CMAKE_AR arm-none-eabi-ar)
-#指定生成二进制文件的工具
 set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-#指定生成汇编文件的工具
 set(CMAKE_OBJDUMP arm-none-eabi-objdump)
-#指定生成大小报告的工具
 set(SIZE arm-none-eabi-size)
 
+# 编译选项
 add_compile_options(-mcpu=cortex-m7 -mfpu=fpv5-d16 -mthumb -mfloat-abi=soft)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0 -Wall)
 
-##项目设置
-#定义项目的名称和使用的编程语言<C><CXX><汇编ASM>
-project(MyExecutable  C CXX ASM)
-#设置项目中 C 标准
+# 设置项目
+project(MyExecutable C ASM)
 set(CMAKE_C_STANDARD 99)
 
+# 设置项目根目录
 set(ROOT_DIR ${CMAKE_SOURCE_DIR})
 
-# 如果需要，添加第三方库
-# find_package(Boost REQUIRED COMPONENTS system filesystem)
-# target_link_libraries(MyExecutable Boost::system Boost::filesystem)
-
-# Include toolchain file
-# include("cmake/gcc-arm-none-eabi.cmake")
-# Core project settings
-project(MyExecutable)
-# message("Build type: " ${CMAKE_BUILD_TYPE})
-
-# 定义各个模块的目录
+# 设置模块的目录
 set(ADAPTER_DIR ${CMAKE_SOURCE_DIR}/src/adapter)
 set(APP_DIR ${CMAKE_SOURCE_DIR}/src/app)
 set(HAL_DIR ${CMAKE_SOURCE_DIR}/src/hal)
 set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/src/middleware)
 set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor/PlatformA)
 
-# 调用函数为每个模块收集头文件
+# 函数收集模块的头文件目录
+function(collect_header_dir MODULE_NAME MODULE_DIR)
+    if(EXISTS ${MODULE_DIR})
+        file(GLOB_RECURSE HEADER_FILES "${MODULE_DIR}/*.h")
+        set(RELATIVE_HEADER_FILES)
+        foreach(file ${HEADER_FILES})
+            get_filename_component(header_dir ${file} DIRECTORY)
+            list(APPEND RELATIVE_HEADER_FILES ${header_dir})
+        endforeach()
+        list(REMOVE_DUPLICATES RELATIVE_HEADER_FILES)
+        set(${MODULE_NAME}_HEADERS ${RELATIVE_HEADER_FILES} PARENT_SCOPE)
+    else()
+        message(WARNING "Directory ${MODULE_DIR} does not exist for module ${MODULE_NAME}")
+    endif()
+endfunction()
+
+# 为每个模块收集头文件
 collect_header_dir(ADAPTER ${ADAPTER_DIR})
 collect_header_dir(APP ${APP_DIR})
 collect_header_dir(HAL ${HAL_DIR})
 collect_header_dir(MIDDLEWARE ${MIDDLEWARE_DIR})
 collect_header_dir(VENDOR ${VENDOR_DIR})
+# collect_header_dir(HAL_Driver ${HAL_Driver_DIR})
 
-# set(VENDOR_HEADERS
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Core/Inc
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H7xx_HAL_Driver/Inc
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H7xx_HAL_Driver/Inc/Legacy
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Device/ST/STM32H7xx/Include
-#     ${CMAKE_SOURCE_DIR}/vendor/platformA/CMSIS/Include
-# )
-# 合并LIST1和LIST2到一个新的列表变量MERGED_LIST
+# 合并头文件列表
 list(APPEND HEADERS_LIST ${ADAPTER_HEADERS} ${APP_HEADERS} ${HAL_HEADERS} ${MIDDLEWARE_HEADERS} ${VENDOR_HEADERS})
-
+# message(STATUS ${HEADERS_LIST})
 # 添加子目录
 add_subdirectory(src)
 add_subdirectory(vendor)
 
-file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c")
+# 设置链接脚本和启动文件
+set(LINK_SCRIPT ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H743IITx_FLASH.ld)
 
-# 链接脚本
-set(LINK_SCRIPT 
-    ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H743IITx_FLASH.ld
-)
+# 设置链接脚本和启动文件
+set(STARTUP_SCRIPT ${CMAKE_SOURCE_DIR}/vendor/platformA/startup_stm32h743xx.s)
 
-# 启动文件
-set(STARTUP_SCRIPT
-    ${CMAKE_SOURCE_DIR}/vendor/platformA/startup_stm32h743xx.s
-)
+# 收集源文件
+# file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c" ${STARTUP_SCRIPT})
 
-# Set the project name
-set(CMAKE_PROJECT_NAME MyExecutable)
 
-# ELF 文件名称
+# 设置目标 ELF 文件
 set(ELF_TARGET ${CMAKE_PROJECT_NAME})
 
+# 创建可执行目标
 add_executable(${CMAKE_PROJECT_NAME}
-        ${hal_deriverLib}
-        ${HalLib}
-        ${AdapterLib}
-        ${app}
-        ${STARTUP_SCRIPT}
-
+    $<TARGET_OBJECTS:hal_deriverLib>
+    $<TARGET_OBJECTS:HalLib>
+    $<TARGET_OBJECTS:AdapterLib>   
+    $<TARGET_OBJECTS:AppLib>
 )
 
-# 链接库文件
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-                    # ${hal_deriverLib}
-                    # ${HalLib}
-                    # ${AdapterLib}
+# # 添加链接库
+# target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
+#     ${hal_deriverLib}
+#     ${HalLib}
+#     ${AdapterLib}
+# )
 
-)
-
-#  编译参数
+# 编译参数
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC 
     USE_HAL_DRIVER 
-	-DSTM32H743xx
-    # QUADSPI
-    # HAL_ETH_USE_PTP
+    -DSTM32H743xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
@@ -163,13 +114,12 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
     -Wl,--print-memory-usage
 )
 
-
 # 包含头文件目录
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${HEADERS_LIST}
 )
 
-# 添加自定义命令，用于生成 hex bin 格式文件，POST_BUILD 表示生成 TARGET 后执行命令
+# 添加自定义命令，用于生成 hex 和 bin 文件
 add_custom_command(TARGET ${ELF_TARGET} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex ${ELF_TARGET} ${ELF_TARGET}.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary -S ${ELF_TARGET} ${ELF_TARGET}.bin

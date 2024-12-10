@@ -2,14 +2,14 @@
 file(GLOB_RECURSE adapter "*.c")
 
 # 添加一个静态库，名为MyStaticLib，包含所有.c文件
-add_library(AdapterLib STATIC ${adapter})
-
+add_library(AdapterLib OBJECT ${adapter})
+# message("adapter: ${adapter}")
 target_compile_definitions(AdapterLib PUBLIC 
 	USE_HAL_DRIVER 
     -DSTM32H743xx
     # HAL_ETH_USE_PTP
 )
-
+# message("adapter: ${ADAPTER_HEADERS}")
 target_include_directories(AdapterLib PUBLIC 
     ${HEADERS_LIST}
 )
