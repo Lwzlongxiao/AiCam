@@ -23,7 +23,7 @@ add_compile_options(-mcpu=cortex-m7 -mfpu=fpv5-d16 -mthumb -mfloat-abi=soft)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0 -Wall)
 
 # 设置项目
-project(MyExecutable C CXX ASM)
+project(MyExecutable C ASM)
 set(CMAKE_C_STANDARD 99)
 
 # 设置项目根目录
@@ -58,32 +58,42 @@ collect_header_dir(APP ${APP_DIR})
 collect_header_dir(HAL ${HAL_DIR})
 collect_header_dir(MIDDLEWARE ${MIDDLEWARE_DIR})
 collect_header_dir(VENDOR ${VENDOR_DIR})
+# collect_header_dir(HAL_Driver ${HAL_Driver_DIR})
 
 # 合并头文件列表
 list(APPEND HEADERS_LIST ${ADAPTER_HEADERS} ${APP_HEADERS} ${HAL_HEADERS} ${MIDDLEWARE_HEADERS} ${VENDOR_HEADERS})
-
+# message(STATUS ${HEADERS_LIST})
 # 添加子目录
 add_subdirectory(src)
 add_subdirectory(vendor)
 
-# 收集源文件
-file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c")
-
 # 设置链接脚本和启动文件
 set(LINK_SCRIPT ${CMAKE_SOURCE_DIR}/vendor/platformA/STM32H743IITx_FLASH.ld)
+
+# 设置链接脚本和启动文件
+set(STARTUP_SCRIPT ${CMAKE_SOURCE_DIR}/vendor/platformA/startup_stm32h743xx.s)
+
+# 收集源文件
+# file(GLOB_RECURSE app "${ROOT_DIR}/src/app/*.c" ${STARTUP_SCRIPT})
+
 
 # 设置目标 ELF 文件
 set(ELF_TARGET ${CMAKE_PROJECT_NAME})
 
 # 创建可执行目标
-add_executable(${CMAKE_PROJECT_NAME} ${app})
-
-# 添加链接库
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-    ${hal_deriverLib}
-    ${HalLib}
-    ${AdapterLib}
+add_executable(${CMAKE_PROJECT_NAME}
+    $<TARGET_OBJECTS:hal_deriverLib>
+    $<TARGET_OBJECTS:HalLib>
+    $<TARGET_OBJECTS:AdapterLib>   
+    $<TARGET_OBJECTS:AppLib>
 )
+
+# # 添加链接库
+# target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
+#     ${hal_deriverLib}
+#     ${HalLib}
+#     ${AdapterLib}
+# )
 
 # 编译参数
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC 
