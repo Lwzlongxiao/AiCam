@@ -27,6 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "hal_i2c.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -40,9 +41,9 @@ extern I2C_HandleTypeDef hi2c4;
 
 /* USER CODE END Private defines */
 
-void MX_I2C1_Init(void);
-void MX_I2C4_Init(void);
-
+void Adapter_I2c_Init(int8_t id);
+void Adapter_I2c_DeInit(int8_t id);
+Hal_I2cStru* Adapter_I2C_GetHandle(uint8_t i2cIndex);
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */

@@ -23,6 +23,7 @@ typedef struct {
     uint32_t Mode;
     uint32_t Pull;
     uint32_t Speed;
+    uint32_t Alternate;    
 } GPIO_Properties;
 
 typedef int8_t status;

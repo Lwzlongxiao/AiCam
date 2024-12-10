@@ -20,99 +20,86 @@
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-I2C_HandleTypeDef hi2c1;
-I2C_HandleTypeDef hi2c4;
-
-/* I2C1 init function */
-void MX_I2C1_Init(void)
+// 文件名+函数+行号printf做dbug
+static Hal_I2cStru g_i2cList[I2C_ID_MAX] = 
 {
+    {
 
-  /* USER CODE BEGIN I2C1_Init 0 */
+    },
+    {
 
-  /* USER CODE END I2C1_Init 0 */
+    },
+    {
 
-  /* USER CODE BEGIN I2C1_Init 1 */
+    },
+    {
+        .i2cProperties.id = I2C_ID3,
+        .i2cProperties.Timing = 0x00606092,
+        .i2cProperties.OwnAddress1 = 0x40,
+        .i2cProperties.AddressingMode = I2C_ADDRESSINGMODE_7BIT,
+        .i2cProperties.DualAddressMode = I2C_DUALADDRESS_DISABLE,
+        .i2cProperties.OwnAddress2 = 0,
+        .i2cProperties.OwnAddress2Masks = I2C_OA2_NOMASK,
+        .i2cProperties.GeneralCallMode = I2C_GENERALCALL_DISABLE,
+        .i2cProperties.NoStretchMode = I2C_NOSTRETCH_DISABLE,
+    }
+};
 
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00606092;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+Hal_I2cStru* Adapter_I2C_GetHandle(uint8_t i2cIndex)
+{
+    if (i2cIndex >= I2C_ID_MAX) {
+        return NULL;
+    }
+    return &g_i2cList[i2cIndex];
+}
+
+void Adapter_I2c_Init(int8_t id)
+{
+  I2C_Hehavior *host = HAL_I2C_GetHost();
+  I2C_HandleTypeDef *hanList = HAL_I2C_GetHandleList();  
+  if (id >= I2C_ID_MAX || host == NULL || hanList == NULL)
+  {
+    return;
+  }
+
+  g_i2cList[id].i2cBehavior = host;
+  g_i2cList[id].i2cHan = &hanList[id];
+
+  if (host->HAL_I2C_InitFn(&hanList[id]) != HAL_OK)
   {
     Error_Handler();
   }
-
   /** Configure Analogue filter
   */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  if (HAL_I2CEx_ConfigAnalogFilter(&hanList[id], I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
     Error_Handler();
   }
 
   /** Configure Digital filter
   */
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
+  if (HAL_I2CEx_ConfigDigitalFilter(&hanList[id], 0) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
 }
-/* I2C4 init function */
-void MX_I2C4_Init(void)
+
+void Adapter_I2c_DeInit(int8_t id)
 {
-
-  /* USER CODE BEGIN I2C4_Init 0 */
-
-  /* USER CODE END I2C4_Init 0 */
-
-  /* USER CODE BEGIN I2C4_Init 1 */
-
-  /* USER CODE END I2C4_Init 1 */
-  hi2c4.Instance = I2C4;
-  hi2c4.Init.Timing = 0x00606092;
-  hi2c4.Init.OwnAddress1 = 0;
-  hi2c4.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c4.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c4.Init.OwnAddress2 = 0;
-  hi2c4.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
-  hi2c4.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c4.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c4) != HAL_OK)
+  I2C_Hehavior *host = HAL_I2C_GetHost();
+  I2C_HandleTypeDef *hanList = HAL_I2C_GetHandleList();  
+  if (id >= I2C_ID_MAX || host == NULL || hanList == NULL)
+  {
+    return;
+  }
+  g_i2cList[id].i2cBehavior = NULL;
+    g_i2cList[id].i2cHan = NULL;
+  if (host->HAL_I2C_DeInitFn(&hanList[id]) != HAL_OK)
   {
     Error_Handler();
   }
-
-  /** Configure Analogue filter
-  */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c4, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Digital filter
-  */
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c4, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C4_Init 2 */
-
-  /* USER CODE END I2C4_Init 2 */
-
 }
+
 
 void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
 {
@@ -232,6 +219,3 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   }
 }
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */

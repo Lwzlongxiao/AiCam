@@ -126,14 +126,19 @@ set(CMAKE_PROJECT_NAME MyExecutable)
 set(ELF_TARGET ${CMAKE_PROJECT_NAME})
 
 add_executable(${CMAKE_PROJECT_NAME}
+        ${hal_deriverLib}
+        ${HalLib}
+        ${AdapterLib}
         ${app}
+        ${STARTUP_SCRIPT}
+
 )
 
 # 链接库文件
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-                    ${hal_deriverLib}
-                    ${HalLib}
-                    ${AdapterLib}
+                    # ${hal_deriverLib}
+                    # ${HalLib}
+                    # ${AdapterLib}
 
 )
 
@@ -148,7 +153,8 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
 
 # 链接参数
 target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-    -T${LINK_SCRIPT}
+    -T
+    ${LINK_SCRIPT}
     ${CPU_FLAGS}
     --specs=nano.specs
     -Wl,--gc-sections

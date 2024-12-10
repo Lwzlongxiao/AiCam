@@ -10,15 +10,12 @@ enum {
     I2C_ID1 = 1,
     I2C_ID2 = 2,
     I2C_ID3 = 3,
-    I2C_ID4 = 4,
-    I2C_ID5 = 5,
-    I2C_ID6 = 6,
-    I2C_ID7 = 7,
-    I2C_ID_MAX = 8
+    I2C_ID_MAX = 4
 };
 
 /* 属性定义 */
 typedef struct {
+    uint32_t id;
     uint32_t Timing; /* 用于计算速度：100khz... */
     uint32_t OwnAddress1;
     uint32_t AddressingMode;
@@ -29,48 +26,48 @@ typedef struct {
     uint32_t NoStretchMode;
 } I2C_Properties;
 
-typedef int8_t status;
-typedef status (*I2C_MasterTransmitFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_MasterReceiveFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveTransmitFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveReceiveFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_MemWriteFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_MemReadFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_IsDeviceReadyFn)(I2C_Properties *, uint16_t, uint32_t, uint32_t);
+typedef HAL_StatusTypeDef status;
+typedef status (*I2C_MasterTransmitFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MasterReceiveFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveTransmitFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveReceiveFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MemWriteFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MemReadFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_IsDeviceReadyFn)(I2C_HandleTypeDef *, uint16_t, uint32_t, uint32_t);
 
-typedef status (*I2C_MasterTransmitITFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_MasterReceiveITFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_SlaveTransmitITFn)(I2C_Properties *, uint8_t *, uint16_t);
-typedef status (*I2C_SlaveReceiveITFn)(I2C_Properties *, uint8_t *, uint16_t);
-typedef status (*I2C_MemWriteITFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_MemReadITFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MasterTransmitITFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MasterReceiveITFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_SlaveTransmitITFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t);
+typedef status (*I2C_SlaveReceiveITFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t);
+typedef status (*I2C_MemWriteITFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MemReadITFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
 
-typedef status (*I2C_MasterSeqTransmitITFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_MasterSeqReceiveITFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveSeqTransmitITFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveSeqReceiveITFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_EnableListenITFn)(I2C_Properties *);
-typedef status (*I2C_DisableListenITFn)(I2C_Properties *);
-typedef status (*I2C_MasterAbortITFn)(I2C_Properties *, uint16_t);
+typedef status (*I2C_MasterSeqTransmitITFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MasterSeqReceiveITFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveSeqTransmitITFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveSeqReceiveITFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_EnableListenITFn)(I2C_HandleTypeDef *);
+typedef status (*I2C_DisableListenITFn)(I2C_HandleTypeDef *);
+typedef status (*I2C_MasterAbortITFn)(I2C_HandleTypeDef *, uint16_t);
 
-typedef status (*I2C_MasterTransmitDMAFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_MasterReceiveDMAFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_SlaveTransmitDMAFn)(I2C_Properties *, uint8_t *, uint16_t);
-typedef status (*I2C_SlaveReceiveDMAFn)(I2C_Properties *, uint8_t *, uint16_t);
-typedef status (*I2C_MemWriteDMAFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
-typedef status (*I2C_MemReadDMAFn)(I2C_Properties *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MasterTransmitDMAFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MasterReceiveDMAFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_SlaveTransmitDMAFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t);
+typedef status (*I2C_SlaveReceiveDMAFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t);
+typedef status (*I2C_MemWriteDMAFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
+typedef status (*I2C_MemReadDMAFn)(I2C_HandleTypeDef *, uint16_t, uint16_t, uint16_t, uint8_t *, uint16_t);
 
-typedef status (*I2C_MasterSeqTransmitDMAFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_MasterSeqReceiveDMAFn)(I2C_Properties *, uint16_t, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveSeqTransmitDMAFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
-typedef status (*I2C_SlaveSeqReceiveDMAFn)(I2C_Properties *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MasterSeqTransmitDMAFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_MasterSeqReceiveDMAFn)(I2C_HandleTypeDef *, uint16_t, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveSeqTransmitDMAFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
+typedef status (*I2C_SlaveSeqReceiveDMAFn)(I2C_HandleTypeDef *, uint8_t *, uint16_t, uint32_t);
 
 /* 行为定义 */
 typedef struct{
-    int8_t (*HAL_I2C_InitFn)(I2C_Properties);
-    int8_t (*HAL_I2C_DeInitFn)(I2C_Properties);
-    void (*HAL_I2C_MspInitFn)(I2C_Properties);
-    void (*HAL_I2C_MspDeInitFn)(I2C_Properties);
+    HAL_StatusTypeDef (*HAL_I2C_InitFn)(I2C_HandleTypeDef*);
+    HAL_StatusTypeDef (*HAL_I2C_DeInitFn)(I2C_HandleTypeDef*);
+    void (*HAL_I2C_MspInitFn)(I2C_HandleTypeDef*);
+    void (*HAL_I2C_MspDeInitFn)(I2C_HandleTypeDef*);
 
     I2C_MasterTransmitFn I2C_MasterTransmit;
     I2C_MasterReceiveFn I2C_MasterReceive;
@@ -112,10 +109,12 @@ typedef struct
 {
     I2C_Properties i2cProperties;
     I2C_Hehavior *i2cBehavior;
+    I2C_HandleTypeDef *i2cHan;
 } Hal_I2cStru;
 
 /* 函数声明 */
 void HAL_IICInitHookFromVendor(void);
-Hal_I2cStru* HAL_I2C_GetHandle(uint8_t i2cIndex);
+I2C_Hehavior* HAL_I2C_GetHost(void);
+I2C_HandleTypeDef *HAL_I2C_GetHandleList(void);
 
 #endif

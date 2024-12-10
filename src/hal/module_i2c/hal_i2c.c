@@ -1,38 +1,25 @@
 #include "hal_i2c.h"
 #include "stm32h7xx_hal.h"
 
-// 文件名+函数+行号printf做dbug
-static Hal_I2cStru g_i2cList[I2C_ID_MAX] = 
-{
+static I2C_HandleTypeDef g_i2cHandleList[I2C_ID_MAX] = {
     {
-
+        .Instance = I2C1,
+        .Init = {0},
     },
     {
-
+        .Instance = I2C2,
+        .Init = {0},
     },
     {
-
+        .Instance = I2C3,
+        .Init = {0},
     },
     {
-
-    },
-    {
-        .i2cProperties.Timing = 0x00606092,
-        .i2cProperties.OwnAddress1 = 0,
-        .i2cProperties.AddressingMode = I2C_ADDRESSINGMODE_7BIT,
-        .i2cProperties.DualAddressMode = I2C_DUALADDRESS_DISABLE,
-        .i2cProperties.OwnAddress2 = 0,
-        .i2cProperties.OwnAddress2Masks = I2C_OA2_NOMASK,
-        .i2cProperties.GeneralCallMode = I2C_GENERALCALL_DISABLE,
-        .i2cProperties.NoStretchMode = I2C_NOSTRETCH_DISABLE,
-    },
-    {
-
-    },
-    {
-
-    },
+        .Instance = I2C4,
+        .Init = {0},
+    }
 };
+
 static I2C_Hehavior g_i2cHost;
 
 void HAL_IICInitHookFromVendor(void)
@@ -76,15 +63,14 @@ void HAL_IICInitHookFromVendor(void)
     g_i2cHost.I2C_SlaveSeqTransmit_DMA = HAL_I2C_Slave_Seq_Transmit_DMA;
     g_i2cHost.I2C_SlaveSeqReceive_DMA = HAL_I2C_Slave_Seq_Receive_DMA;
 
-    for (uint32_t i = 0; i < I2C_ID_MAX; i++) {
-        g_i2cList[i].i2cBehavior = &g_i2cHost;
-    }
 }
 
-Hal_I2cStru* HAL_I2C_GetHandle(uint8_t i2cIndex)
+I2C_Hehavior* HAL_I2C_GetHost(void)
 {
-    if (i2cIndex >= I2C_ID_MAX) {
-        return NULL;
-    }
-    return &g_i2cList[i2cIndex];
+    return &g_i2cHost;
+}
+
+I2C_HandleTypeDef *HAL_I2C_GetHandleList(void)
+{
+    return &g_i2cHandleList;
 }

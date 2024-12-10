@@ -28,6 +28,8 @@
 #include "usb_otg.h"
 #include "gpio.h"
 #include "fmc.h"
+#include "adapter_pca9555.h"
+#include "adapter_led.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -117,7 +119,8 @@ int main(void)
   MX_FMC_Init();
   MX_I2C4_Init();
   /* USER CODE BEGIN 2 */
-
+  ADAPTER_Pca9555Init();
+  ADAPTER_Ledinit();
   /* USER CODE END 2 */
 
   /* Infinite loop */

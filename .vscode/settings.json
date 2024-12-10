@@ -31,6 +31,9 @@
         "stm32h7xx.h": "c",
         "stm32h743xx.h": "c",
         "hal_gpio.h": "c",
-        "stm32h7xx_hal_gpio.h": "c"
+        "stm32h7xx_hal_gpio.h": "c",
+        "adapter_led.h": "c",
+        "stdint.h": "c",
+        "stddef.h": "c"
     }
 }
