@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug with OpenOCD",
+        "type": "cortex-debug",
+        "request": "launch",
+        "cwd": "${workspaceFolder}",
+        "executable": "${workspaceFolder}/build/MyExecutable.elf",
+        "servertype": "openocd",
+        "device": "STM32H743IIT6", // 根据实际设备填写
+        "configFiles": [
+          "interface/stlink.cfg",  // 调试器配置
+          "target/stm32h7x_dual_bank.cfg"    // 芯片目标配置
+          // openocd -f interface/stlink.cfg -f target/stm32h7x_dual_bank.cfg
+        ],
+        "serverpath": "C:/Program Files (x86)/OpenOCD/bin/openocd.exe"
+        // "runToMain": true
+      }
+    ]
+  }
+  

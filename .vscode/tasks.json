@@ -1,0 +1,21 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "download",
+            "type": "shell",
+            "command": "C:/Program Files (x86)/OpenOCD/bin/openocd.exe",
+            "args": [
+                "-f",
+                "interface/stlink.cfg",
+                "-f",
+                "target/stm32h7x_dual_bank.cfg",
+                "-c",
+                "program build/MyExecutable.elf verify reset exit"
+            ],
+            "group": "build"
+        }
+    ]
+}
