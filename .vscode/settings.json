@@ -36,6 +36,8 @@
         "circle_buffer.h": "c",
         "string.h": "c",
         "usb_otg.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "adapter_led.h": "c",
+        "stddef.h": "c"
     }
 }

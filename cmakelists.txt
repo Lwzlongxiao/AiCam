@@ -123,4 +123,5 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
 add_custom_command(TARGET ${ELF_TARGET} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex ${ELF_TARGET} ${ELF_TARGET}.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary -S ${ELF_TARGET} ${ELF_TARGET}.bin
+    COMMAND ${CMAKE_OBJCOPY}  ${ELF_TARGET} ${ELF_TARGET}.elf
 )

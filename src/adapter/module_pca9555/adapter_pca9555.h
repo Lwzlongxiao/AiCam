@@ -9,6 +9,12 @@ enum {
     PCA9555_PORT0 = 0,
     PCA9555_PORT1 = 1,
 };
+
+enum {
+    PCA9555_PIN_RESET = 0,
+    PCA9555_PIN_SET = 1,
+};
+
 enum {
     PCA9555_PIN0 = 0,
     PCA9555_PIN1,
@@ -42,9 +48,9 @@ enum {
 #define CONFIG_PORT_REGISTER1 0x07
 
 /* 函数声明 */
-void ADAPTER_Pca9555Init(void);
-void ADAPTER_Pca9555SetOutputMode(uint8_t pin);
-void ADAPTER_Pca9555SetInputMode(uint8_t pin);
-void ADAPTER_Pca9555SetGPIOOutputStatus(uint8_t pin, uint8_t status);
-uint8_t ADAPTER_Pca9555GetGPIOStatus(uint8_t pin);
+void Adapter_Pca9555Init(void);
+void Adapter_Pca9555SetOutputMode(uint8_t pin);
+void Adapter_Pca9555SetInputMode(uint8_t pin);
+void Adapter_Pca9555SetGPIOOutputStatus(uint8_t pin, uint8_t status);
+uint8_t Adapter_Pca9555GetGPIOStatus(uint8_t pin);
 #endif /* _MODULE_PCA9555_H */

@@ -29,7 +29,7 @@
 #include "gpio.h"
 #include "fmc.h"
 #include "stdlib.h"
-#include "adapter_pca9555.h"
+#include "Adapter_Pca9555.h"
 #include "adapter_led.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -112,19 +112,17 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_USART1_UART_Init();
-  MX_SDMMC1_SD_Init();
-  MX_I2C1_Init();
+  // MX_SDMMC1_SD_Init();
   MX_USB_OTG_FS_PCD_Init();
   MX_SPI6_Init();
   MX_USART2_UART_Init();
   MX_FMC_Init();
-  MX_I2C4_Init();
   /* USER CODE BEGIN 2 */
-  Cli_Init();  
-  ADAPTER_Pca9555Init();
-  ADAPTER_Ledinit();
+  // Cli_Init();  
+  // Adapter_Pca9555Init();
+  // Adapter_LedInit();
   /* USER CODE END 2 */
-
+  HAL_UART_Transmit(&huart2, (uint8_t*)"Hello World!\r\n", 14, 1000);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
