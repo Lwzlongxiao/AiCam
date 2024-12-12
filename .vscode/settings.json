@@ -39,5 +39,6 @@
         "stdlib.h": "c",
         "adapter_led.h": "c",
         "stddef.h": "c"
-    }
+    },
+    "cortex-debug.variableUseNaturalFormat": true
 }
